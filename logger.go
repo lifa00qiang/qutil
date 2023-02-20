@@ -4,6 +4,7 @@ import (
 	"github.com/natefinch/lumberjack"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"os"
 )
 
 var logger *zap.SugaredLogger
@@ -32,7 +33,7 @@ func newLogger(cfg ...LoggerConfig) {
 	defer func(l *zap.Logger) {
 		err := l.Sync()
 		if err != nil {
-			logger.Error("异步日志创建失败")
+			print(111111)
 		}
 	}(l)
 	logger = l.Sugar()
@@ -61,7 +62,7 @@ func getLogWriter(cfg ...LoggerConfig) zapcore.WriteSyncer {
 		}
 	} else {
 		option = &lumberjack.Logger{
-			Filename:   "/log/logger.log",
+			Filename:   "./log/logger.log",
 			MaxSize:    30,
 			MaxAge:     30,
 			MaxBackups: 60,
@@ -69,6 +70,13 @@ func getLogWriter(cfg ...LoggerConfig) zapcore.WriteSyncer {
 			Compress:   false,
 		}
 
+	}
+
+	if PathExists(option.Filename) {
+		err := os.MkdirAll(option.Filename, os.ModePerm)
+		if err != nil {
+			panic("日志文件创建失败")
+		}
 	}
 
 	lumberJackLogger := option
