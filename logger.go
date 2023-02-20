@@ -4,7 +4,6 @@ import (
 	"github.com/natefinch/lumberjack"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"os"
 )
 
 var logger *zap.SugaredLogger
@@ -43,7 +42,8 @@ func getEncoder() zapcore.Encoder {
 	encoderConf := zap.NewProductionEncoderConfig()
 	encoderConf.EncodeTime = zapcore.ISO8601TimeEncoder
 	encoderConf.EncodeLevel = zapcore.CapitalLevelEncoder
-	return zapcore.NewConsoleEncoder(encoderConf)
+	return zapcore.NewJSONEncoder(encoderConf)
+	//return zapcore.NewConsoleEncoder(encoderConf)
 }
 
 func getLogWriter(cfg ...LoggerConfig) zapcore.WriteSyncer {
@@ -71,15 +71,6 @@ func getLogWriter(cfg ...LoggerConfig) zapcore.WriteSyncer {
 		}
 
 	}
-
-	if PathExists(option.Filename) {
-		err := os.MkdirAll(option.Filename, os.ModePerm)
-		if err != nil {
-			panic("日志文件创建失败")
-		}
-	}
-
 	lumberJackLogger := option
 	return zapcore.AddSync(lumberJackLogger)
-
 }
