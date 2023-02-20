@@ -1,4 +1,4 @@
-module Qutil
+module github.com/lifa00qiang/qutil
 
 go 1.17
 
